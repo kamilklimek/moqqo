@@ -70,4 +70,8 @@ public class Task {
     public void setTaskDescription(String taskDescription) {
         this.taskDescription = taskDescription;
     }
+    @Override
+    public String toString(){
+        return id + "~" + projectId + "~" + taskName  + "~" + taskDescription + "\n";
+    }
 }

@@ -77,6 +77,10 @@ public class User {
         return Objects.hash(id, email, login, password, projectList);
     }
 
+    public void addProject(Project project){
+        projectList.add(project);
+    }
+
     public Long getId() {
         return id;
     }
@@ -115,5 +119,10 @@ public class User {
 
     public void setProjectList(List<Project> projectList) {
         this.projectList = projectList;
+    }
+
+    @Override
+    public String toString(){
+        return id + "~" + login + "~" + email  + "~" + password  + "~" + projectList.toString() + "\n";
     }
 }
