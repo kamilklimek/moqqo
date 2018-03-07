@@ -7,16 +7,19 @@ public class Task {
     private Long id;
     private String taskName;
     private String taskDescription;
+    private Long projectId;
 
-    public Task(Long id, String taskName) {
+    public Task(Long id, String taskName, Long projectId) {
         this.id = id;
         this.taskName = taskName;
+        this.projectId=projectId;
     }
 
-    public Task(Long id, String taskName, String taskDescription) {
+    public Task(Long id, String taskName, String taskDescription, Long projectId) {
         this.id = id;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
+        this.projectId=projectId;
     }
 
     @Override
@@ -26,13 +29,22 @@ public class Task {
         Task task = (Task) o;
         return Objects.equals(id, task.id) &&
                 Objects.equals(taskName, task.taskName) &&
-                Objects.equals(taskDescription, task.taskDescription);
+                Objects.equals(taskDescription, task.taskDescription) &&
+                Objects.equals(projectId, task.projectId);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, taskName, taskDescription);
+        return Objects.hash(id, taskName, taskDescription, projectId);
+    }
+
+    public Long getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Long projectId) {
+        this.projectId = projectId;
     }
 
     public Long getId() {
