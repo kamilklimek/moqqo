@@ -2,20 +2,21 @@ package model;
 
 import java.util.Objects;
 
+
 public class Task {
 
-    private Long id;
+    private Integer id;
     private String taskName;
     private String taskDescription;
-    private Long projectId;
+    private Integer projectId;
 
-    public Task(Long id, String taskName, Long projectId) {
+    public Task(Integer id, String taskName, Integer projectId) {
         this.id = id;
         this.taskName = taskName;
         this.projectId=projectId;
     }
 
-    public Task(Long id, String taskName, String taskDescription, Long projectId) {
+    public Task(Integer id, String taskName, String taskDescription, Integer projectId) {
         this.id = id;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
@@ -39,19 +40,19 @@ public class Task {
         return Objects.hash(id, taskName, taskDescription, projectId);
     }
 
-    public Long getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
 
-    public void setProjectId(Long projectId) {
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

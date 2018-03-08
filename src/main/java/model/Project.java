@@ -5,27 +5,27 @@ import java.util.Objects;
 
 public class Project {
 
-    private Long id;
+    private Integer id;
     private String projectName;
     private String projectDescription;
-    private Long userId;
+    private Integer userId;
     private List<Task> taskList;
 
 
-    public Project(Long id, String projectName, Long userId) {
+    public Project(Integer id, String projectName, Integer userId) {
         this.id = id;
         this.projectName = projectName;
         this.userId = userId;
     }
 
-    public Project(Long id, String projectName, Long userId, String projectDescription) {
+    public Project(Integer id, String projectName, Integer userId, String projectDescription) {
         this.id = id;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.userId = userId;
     }
 
-    public Project(Long id, String projectName, String projectDescription, Long userId, List<Task> taskList) {
+    public Project(Integer id, String projectName, String projectDescription, Integer userId, List<Task> taskList) {
         this.id = id;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
@@ -45,11 +45,11 @@ public class Project {
         this.taskList = taskList;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -69,11 +69,11 @@ public class Project {
         this.projectDescription = projectDescription;
     }
 
-    public Long getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 

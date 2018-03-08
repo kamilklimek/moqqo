@@ -6,13 +6,13 @@ import java.util.Objects;
 
 public class User {
 
-    private Long id;
+    private Integer id;
     private String email;
     private String login;
     private String password;
     private List<Project> projectList;
 
-    public User(Long id, String email, String login, String password, List<Project> projectList) {
+    public User(Integer id, String email, String login, String password, List<Project> projectList) {
         this.id = id;
         this.email = email;
         this.login = login;
@@ -21,13 +21,13 @@ public class User {
     }
 
     private static class UserBuilder{
-        private Long id;
+        private Integer id;
         private String email;
         private String login;
         private String password;
         private List<Project> projectList;
 
-        public UserBuilder setId(Long id){
+        public UserBuilder setId(Integer id){
             this.id=id;
             return this;
         }
@@ -81,11 +81,11 @@ public class User {
         projectList.add(project);
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
