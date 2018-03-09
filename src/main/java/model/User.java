@@ -12,6 +12,7 @@ public class User {
     private String password;
     private List<Project> projectList;
 
+    public User(){}
     public User(Integer id, String email, String login, String password, List<Project> projectList) {
         this.id = id;
         this.email = email;
@@ -20,7 +21,7 @@ public class User {
         this.projectList = projectList;
     }
 
-    private static class UserBuilder{
+    public static class UserBuilder{
         private Integer id;
         private String email;
         private String login;
@@ -123,6 +124,11 @@ public class User {
 
     @Override
     public String toString(){
-        return id + "~" + login + "~" + email  + "~" + password  + "~" + projectList.toString() + "\n";
+        return id + "~" + login + "~" + email  + "~" + password;
+    }
+
+    public byte[] toBytes(){
+        String str = toString();
+        return str.getBytes();
     }
 }
