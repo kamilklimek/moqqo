@@ -71,7 +71,7 @@ public class UserDao implements Dao{
             for (Map.Entry<Integer, User> user: users.entrySet()) {
                 bytes = user.getValue().toBytes();
                 file.write(bytes.length);
-                file.write(user.getValue().toBytes());
+                file.write(bytes);
             }
             file.write(BYTE_END_OF_FILE);
             file.close();

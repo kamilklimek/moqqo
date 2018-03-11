@@ -3,10 +3,7 @@ package dao;
 import api.Dao;
 import model.Task;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author maniaq
@@ -23,9 +20,9 @@ public class TaskDao implements Dao {
     /**
      * Map for holding tasks
      * key: projectId
-     * value: Task
+     * value: List of tasks which are in the same project
      */
-    private Map<Integer, Task> tasks;
+    private Map<Integer, List<Task>> tasks;
 
     public TaskDao(){
         tasks = new HashMap<>();
@@ -33,7 +30,20 @@ public class TaskDao implements Dao {
 
     @Override
     public void insert(Object value) {
+        List<Task> taskList;
+        Task task = (Task) value;
+        boolean ifTaskExist = tasks.containsKey(task.getProjectId());
+        if(ifTaskExist){
+            taskList = tasks.get(task.getProjectId());
+            taskList.add(task);
 
+            tasks.remove(task.getProjectId());
+            tasks.put(task.getProjectId(), taskList);
+        }else{
+            taskList = new LinkedList<>();
+            taskList.add(task);
+            tasks.put(task.getProjectId(), taskList);
+        }
     }
 
     @Override
@@ -48,7 +58,9 @@ public class TaskDao implements Dao {
 
     @Override
     public Integer existsById(Integer id) {
-        return null;
+        if(tasks.containsKey(id))
+            return id;
+        return -1;
     }
 
     @Override

@@ -7,10 +7,7 @@ import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * @author maniaq
@@ -28,7 +25,7 @@ public class ProjectDao implements Dao {
      * key: userID
      * value: project
      */
-    private Map<Integer, Project> projects;
+    private Map<Integer, List<Project>> projects;
 
     public ProjectDao(){
         projects = new HashMap<>();
@@ -37,7 +34,19 @@ public class ProjectDao implements Dao {
     @Override
     public void insert(Object value) {
         Project project = (Project)value;
-        projects.put(project.getUserId(), project);
+        List<Project> projectList;
+        boolean ifProjectExists = projects.containsKey(((Project) value).getUserId());
+        if(ifProjectExists){
+            projectList = projects.get(((Project) value).getUserId());
+            projectList.add(project);
+
+            projects.remove(((Project) value).getUserId());
+            projects.put(((Project) value).getUserId(), projectList);
+        }else{
+            projectList = new LinkedList<>();
+            projectList.add(project);
+            projects.put(project.getUserId(), projectList);
+        }
     }
 
     @Override
@@ -67,6 +76,14 @@ public class ProjectDao implements Dao {
         }
     }
 
+    public Optional<List<Project>> getProjectsListByUserId(Integer userId){
+        if(existsById(userId)==-1)
+            return Optional.empty();
+
+        return Optional.of(projects.get(userId));
+
+    }
+
     @Override
     public void loadFromDb() {
         try {
@@ -79,7 +96,7 @@ public class ProjectDao implements Dao {
                         bytes = new byte[sizeOfRecord];
                         file.read(bytes);
                         Project project = (Project)parseRecord(new String(bytes));
-                        projects.put(project.getUserId(), project);
+                        insert(project);
                     }
                 }
             }catch(EOFException e){
@@ -99,10 +116,15 @@ public class ProjectDao implements Dao {
         try {
             byte[] bytes;
             RandomAccessFile file = new RandomAccessFile(DB_NAME, "rw");
-            for (Map.Entry<Integer, Project> project: projects.entrySet()) {
-                bytes = project.getValue().toBytes();
-                file.write(bytes.length);
-                file.write(project.getValue().toBytes());
+            for (Map.Entry<Integer, List<Project>> projectFromList: projects.entrySet()) {
+                for (Project project : projectFromList.getValue()
+                     ) {
+                    bytes = project.toBytes();
+                    file.write(bytes.length);
+                    file.write(bytes);
+                }
+
+
             }
             file.write(BYTE_END_OF_FILE);
             file.close();

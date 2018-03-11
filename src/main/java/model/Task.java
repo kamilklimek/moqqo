@@ -73,6 +73,10 @@ public class Task {
     }
     @Override
     public String toString(){
-        return id + "~" + projectId + "~" + taskName  + "~" + taskDescription + "\n";
+        return id + "~" + projectId + "~" + taskName  + "~" + taskDescription;
+    }
+
+    public byte[] toBytes(){
+        return toString().getBytes();
     }
 }
