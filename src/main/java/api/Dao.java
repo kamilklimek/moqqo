@@ -1,6 +1,7 @@
 package api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface Dao {
@@ -11,7 +12,7 @@ public interface Dao {
     int BYTE_SEPARATOR_IN_RECORD = 0x7E;
     void insert(Object value);
     Optional<Object> findById(Integer id);
-    List<Object> selectAll();
+    public Map<Integer, Object> selectAll();
     Integer existsById(Integer id);
     void removeById(Integer id);
 

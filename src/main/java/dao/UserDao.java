@@ -12,13 +12,26 @@ import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+/**
+ * @author maniaq
+ * Class stands for operations on users' database (binary file)
+ */
+
 public class UserDao implements Dao{
 
+    /**
+     * name of file where contain users informations
+     */
     private final String DB_NAME = "users";
-    private List<User> userList;
+    /**
+     * Map for holding users
+     * Key: UserId
+     * Value: User
+     */
+    private Map<Integer, User> users;
 
     public UserDao(){
-        userList = new LinkedList<>();
+        users = new HashMap<>();
     }
 
     @Override
@@ -32,7 +45,8 @@ public class UserDao implements Dao{
                     if(sizeOfRecord>0){
                         bytes = new byte[sizeOfRecord];
                         file.read(bytes);
-                        userList.add((User)parseRecord(new String(bytes)));
+                        User user = (User)parseRecord(new String(bytes));
+                        users.put(user.getId(), user);
                     }
                 }
             }catch(EOFException e){
@@ -54,11 +68,10 @@ public class UserDao implements Dao{
         try {
             byte[] bytes;
             RandomAccessFile file = new RandomAccessFile(DB_NAME, "rw");
-            for (User user: userList
-                 ) {
-                bytes = user.toBytes();
+            for (Map.Entry<Integer, User> user: users.entrySet()) {
+                bytes = user.getValue().toBytes();
                 file.write(bytes.length);
-                file.write(user.toBytes());
+                file.write(user.getValue().toBytes());
             }
             file.write(BYTE_END_OF_FILE);
             file.close();
@@ -84,7 +97,9 @@ public class UserDao implements Dao{
 
     @Override
     public void insert(Object user) {
-        userList.add((User)user);
+        User tempUser = (User)user;
+
+        users.put(tempUser.getId(), tempUser);
         saveToDb();
     }
 
@@ -93,31 +108,27 @@ public class UserDao implements Dao{
         if(existsById(id) == -1)
             return Optional.empty();
 
-        return Optional.of(userList.get(id));
+        return Optional.of(users.containsKey(id));
     }
 
 
     @Override
-    public List<Object> selectAll() {
-        return (List)userList;
+    public Map<Integer, Object> selectAll() {
+        return (Map)users;
     }
 
     @Override
     public Integer existsById(Integer id) {
-        for (User user : userList
-             ) {
-            boolean userExists = Objects.equals(user.getId(), id);
-            if(userExists)
-                return userList.indexOf(user);
-        }
-        return -1;
+        if(!users.containsKey(id))
+            return -1;
+        return id;
     }
 
     @Override
     public void removeById(Integer id) {
         if(existsById(id) == -1)
             return;
-        userList.remove(id);
+        users.remove(id);
         saveToDb();
     }
 }

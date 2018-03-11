@@ -3,7 +3,10 @@ package model;
 
 import java.util.List;
 import java.util.Objects;
-
+/**
+ * @author maniaq
+ * Class holds basic informations of user (user model)
+ */
 public class User {
 
     private Integer id;

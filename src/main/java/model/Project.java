@@ -11,26 +11,53 @@ public class Project {
     private Integer userId;
     private List<Task> taskList;
 
-
-    public Project(Integer id, String projectName, Integer userId) {
-        this.id = id;
-        this.projectName = projectName;
-        this.userId = userId;
-    }
-
-    public Project(Integer id, String projectName, Integer userId, String projectDescription) {
-        this.id = id;
-        this.projectName = projectName;
-        this.projectDescription = projectDescription;
-        this.userId = userId;
-    }
-
     public Project(Integer id, String projectName, String projectDescription, Integer userId, List<Task> taskList) {
         this.id = id;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.userId = userId;
         this.taskList = taskList;
+    }
+
+    public static class ProjectBuilder{
+        private Integer id;
+        private String projectName;
+        private String projectDescription;
+        private Integer userId;
+        private List<Task> taskList;
+
+        public ProjectBuilder(){
+
+        }
+
+        public ProjectBuilder setProjectId(Integer id){
+            this.id=id;
+            return this;
+        }
+
+        public ProjectBuilder setProjectName(String projectName){
+            this.projectName=projectName;
+            return this;
+        }
+
+        public ProjectBuilder setProjectDescription(String projectDescription){
+            this.projectDescription=projectDescription;
+            return this;
+        }
+
+        public ProjectBuilder setUserId(Integer userId){
+            this.userId=userId;
+            return this;
+        }
+
+        public ProjectBuilder setTasksList(List<Task> tasksList){
+            this.taskList = tasksList;
+            return this;
+        }
+
+        public Project buildProject(){
+            return new Project(id, projectName, projectDescription, userId, taskList);
+        }
     }
 
     public void addTask(Task task){
@@ -95,8 +122,12 @@ public class Project {
         return Objects.hash(id, projectName, projectDescription, userId, taskList);
     }
 
+    public byte[] toBytes(){
+        String str = toString();
+        return str.getBytes();
+    }
     @Override
     public String toString(){
-        return id + "~" + userId + "~" + projectName  + "~" + projectDescription + "~" + taskList.toString() +"\n";
+        return id + "~" + userId + "~" + projectName  + "~" + projectDescription;
     }
 }

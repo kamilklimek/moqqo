@@ -1,5 +1,7 @@
 package service;
 
+import dao.ProjectDao;
+import dao.TaskDao;
 import dao.UserDao;
 
 public class UserService {
