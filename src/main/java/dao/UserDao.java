@@ -27,21 +27,16 @@ public class UserDao implements Dao{
             RandomAccessFile file = new RandomAccessFile(DB_NAME, "r");
             byte sizeOfRecord;
             byte[] bytes;
-            Set<String> result = new HashSet<>();
             try{
-                while(true){
-                    sizeOfRecord = file.readByte();
-                    System.out.println(sizeOfRecord);
+                while((sizeOfRecord = file.readByte()) != BYTE_END_OF_FILE){
                     if(sizeOfRecord>0){
                         bytes = new byte[sizeOfRecord];
-                        result.add(new String(bytes, "US-ASCII"));
+                        file.read(bytes);
+                        userList.add((User)parseRecord(new String(bytes)));
                     }
                 }
             }catch(EOFException e){
-                for (String s : result
-                     ) {
-                  //  System.out.println(s.);
-                }
+
             }
             file.close();
 
@@ -64,11 +59,9 @@ public class UserDao implements Dao{
                 bytes = user.toBytes();
                 file.write(bytes.length);
                 file.write(user.toBytes());
-                //file.write(BYTE_END_OF_RECORD);
             }
-           // file.write(BYTE_END_OF_FILE);
+            file.write(BYTE_END_OF_FILE);
             file.close();
-
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -79,13 +72,20 @@ public class UserDao implements Dao{
 
     @Override
     public Object parseRecord(String record) {
-        User user = new User();
+        String [] userInformations = record.split("~");
+        User user = new User.UserBuilder()
+                .setId(Integer.parseInt(userInformations[0]))
+                .setLogin(userInformations[1])
+                .setEmail(userInformations[2])
+                .setPassword(userInformations[3])
+                .buildUser();
         return (Object) user;
     }
 
     @Override
     public void insert(Object user) {
         userList.add((User)user);
+        saveToDb();
     }
 
     @Override
@@ -118,5 +118,6 @@ public class UserDao implements Dao{
         if(existsById(id) == -1)
             return;
         userList.remove(id);
+        saveToDb();
     }
 }
