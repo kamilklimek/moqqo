@@ -1,6 +1,7 @@
 package dao;
 
 import api.Dao;
+import api.DaoRelation;
 import model.Task;
 
 import java.util.*;
@@ -10,7 +11,7 @@ import java.util.*;
  * Class stands for operations on tasks' database (binary file)
  */
 
-public class TaskDao implements Dao {
+public class TaskDao implements Dao, DaoRelation{
 
     /**
      * name of file where contain tasks informations
@@ -48,8 +49,13 @@ public class TaskDao implements Dao {
 
     @Override
     public Optional<Object> findById(Integer id) {
+        if(existsById(id)!= -1){
+            return Optional.of(tasks.get(id));
+        }
         return Optional.empty();
     }
+
+
 
     @Override
     public Map<Integer, Object> selectAll() {
@@ -65,6 +71,9 @@ public class TaskDao implements Dao {
 
     @Override
     public void removeById(Integer id) {
+        if(existsById(id) == -1)
+            return;
+
 
     }
 
@@ -80,6 +89,26 @@ public class TaskDao implements Dao {
 
     @Override
     public Object parseRecord(String record) {
-        return null;
+        String [] projectInformations = record.split("~");
+        Task task = new Task.TaskBuilder()
+                .setId(Integer.parseInt(projectInformations[0]))
+                .setProjectId(Integer.parseInt(projectInformations[1]))
+                .setTaskName(projectInformations[2])
+                .setTaskDescription(projectInformations[3])
+                .buildTask();
+        return (Object) task;
+    }
+
+    public Optional<List<Task>> getTasksListByProjectId(Integer projectId){
+        if(existsById(projectId)==-1)
+            return Optional.empty();
+
+        return Optional.of(tasks.get(projectId));
+
+    }
+
+    @Override
+    public Optional<List<Object>> getObjectByKeyIdAndListId(Integer key, Integer objectId) {
+        return Optional.empty();
     }
 }

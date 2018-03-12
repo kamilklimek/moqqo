@@ -1,6 +1,7 @@
 package dao;
 
 import api.Dao;
+import api.DaoRelation;
 import model.Project;
 
 import java.io.EOFException;
@@ -14,7 +15,7 @@ import java.util.*;
  * Class stands for operations on database (binary file)
  */
 
-public class ProjectDao implements Dao {
+public class ProjectDao implements Dao, DaoRelation {
     /**
      * name of file where contain projects informations
      */
@@ -146,5 +147,10 @@ public class ProjectDao implements Dao {
                 .setUserId(Integer.parseInt(projectInformations[3]))
                 .buildProject();
         return (Object) project;
+    }
+
+    @Override
+    public Optional<List<Object>> getObjectByKeyIdAndListId(Integer key, Integer objectId) {
+        return Optional.empty();
     }
 }

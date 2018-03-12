@@ -10,17 +10,45 @@ public class Task {
     private String taskDescription;
     private Integer projectId;
 
-    public Task(Integer id, String taskName, Integer projectId) {
-        this.id = id;
-        this.taskName = taskName;
-        this.projectId=projectId;
-    }
 
     public Task(Integer id, String taskName, String taskDescription, Integer projectId) {
         this.id = id;
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.projectId=projectId;
+    }
+
+    public static class TaskBuilder{
+        private Integer id;
+        private String taskName;
+        private String taskDescription;
+        private Integer projectId;
+
+        public TaskBuilder(){}
+
+        public TaskBuilder setId(Integer id){
+            this.id =id;
+            return this;
+        }
+
+        public TaskBuilder setTaskName(String taskName){
+            this.taskName=taskName;
+            return this;
+        }
+        public TaskBuilder setTaskDescription(String taskDescription){
+            this.taskDescription=taskDescription;
+            return this;
+        }
+
+        public TaskBuilder setProjectId(Integer projectId){
+            this.projectId = projectId;
+            return this;
+        }
+
+        public Task buildTask(){
+            return new Task(id, taskName, taskDescription, projectId);
+        }
+
     }
 
     @Override
