@@ -5,6 +5,8 @@ import java.util.Objects;
 
 public class Project {
 
+    public static Integer PROJECT_ID = 0;
+
     private Integer id;
     private String projectName;
     private String projectDescription;
@@ -12,11 +14,12 @@ public class Project {
     private List<Task> taskList;
 
     public Project(Integer id, String projectName, String projectDescription, Integer userId, List<Task> taskList) {
-        this.id = id;
+        this.id = PROJECT_ID;
         this.projectName = projectName;
         this.projectDescription = projectDescription;
         this.userId = userId;
         this.taskList = taskList;
+        PROJECT_ID++;
     }
 
     public static class ProjectBuilder{
@@ -76,9 +79,7 @@ public class Project {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+
 
     public String getProjectName() {
         return projectName;

@@ -5,6 +5,8 @@ import java.util.Objects;
 
 public class Task {
 
+    public static Integer TASK_ID = 0;
+
     private Integer id;
     private String taskName;
     private String taskDescription;
@@ -16,10 +18,12 @@ public class Task {
         this.taskName = taskName;
         this.taskDescription = taskDescription;
         this.projectId=projectId;
+
+        TASK_ID++;
     }
 
     public static class TaskBuilder{
-        private Integer id;
+        private Integer id = TASK_ID;
         private String taskName;
         private String taskDescription;
         private Integer projectId;
@@ -78,10 +82,6 @@ public class Task {
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getTaskName() {

@@ -9,23 +9,25 @@ import java.util.Objects;
  */
 public class User {
 
+    public static Integer USER_ID = 0;
+
     private Integer id;
     private String email;
     private String login;
     private String password;
     private List<Project> projectList;
 
-    public User(){}
     public User(Integer id, String email, String login, String password, List<Project> projectList) {
         this.id = id;
         this.email = email;
         this.login = login;
         this.password = password;
         this.projectList = projectList;
+        USER_ID++;
     }
 
     public static class UserBuilder{
-        private Integer id;
+        private Integer id = USER_ID;
         private String email;
         private String login;
         private String password;
@@ -89,9 +91,7 @@ public class User {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+
 
     public String getEmail() {
         return email;

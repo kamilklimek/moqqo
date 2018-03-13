@@ -124,6 +124,16 @@ public class UserDao implements Dao{
         return id;
     }
 
+    public Integer existsByLogin(String email){
+        for (Map.Entry<Integer, User > user: users.entrySet()) {
+            if(user.getValue().getEmail() == email)
+                return user.getKey();
+        }
+
+        return -1;
+
+    }
+
     @Override
     public void removeById(Integer id) {
         if(existsById(id) == -1)

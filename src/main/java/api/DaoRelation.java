@@ -5,6 +5,6 @@ import java.util.Optional;
 
 public interface DaoRelation {
 
-    public Optional<List<Object>> getObjectByKeyIdAndListId(Integer key, Integer objectId);
+    public Optional<Object> getObjectByKeyIdAndListId(Integer key, Integer objectId);
 
 }

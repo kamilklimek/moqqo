@@ -1,3 +1,6 @@
+import dao.ProjectDao;
+import dao.TaskDao;
+import dao.UserDao;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,11 +19,21 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import model.Project;
+import model.Task;
+import model.User;
+import service.UserService;
 
 public class Main extends Application {
 
     public static void main(String[] args) {
-        launch();
+        UserService userService = new UserService();
+
+
+        User user = userService.login("kamcio", "asdasd").get();
+
+
+        //launch();
     }
 
     @Override

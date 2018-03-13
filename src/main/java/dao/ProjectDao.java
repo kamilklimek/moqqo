@@ -20,11 +20,10 @@ public class ProjectDao implements Dao, DaoRelation {
      * name of file where contain projects informations
      */
     private final String DB_NAME = "projects";
-
     /**
      * Map for projects
      * key: userID
-     * value: project
+     * value: list of projects
      */
     private Map<Integer, List<Project>> projects;
 
@@ -37,6 +36,7 @@ public class ProjectDao implements Dao, DaoRelation {
         Project project = (Project)value;
         List<Project> projectList;
         boolean ifProjectExists = projects.containsKey(((Project) value).getUserId());
+
         if(ifProjectExists){
             projectList = projects.get(((Project) value).getUserId());
             projectList.add(project);
@@ -106,9 +106,9 @@ public class ProjectDao implements Dao, DaoRelation {
             file.close();
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -150,7 +150,10 @@ public class ProjectDao implements Dao, DaoRelation {
     }
 
     @Override
-    public Optional<List<Object>> getObjectByKeyIdAndListId(Integer key, Integer objectId) {
+    public Optional<Object> getObjectByKeyIdAndListId(Integer key, Integer objectId) {
+        if(existsById(key) == -1){
+            return Optional.of(projects.get(key).get(objectId));
+        }
         return Optional.empty();
     }
 }
