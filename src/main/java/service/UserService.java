@@ -7,6 +7,7 @@ import model.Project;
 import model.Task;
 import model.User;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -16,21 +17,33 @@ public class UserService {
     private ProjectDao projectDao;
     private TaskDao taskDao;
     private User user;
+    private boolean isLog;
+
+
 
 
     public UserService(){
         userDao = new UserDao();
         projectDao = new ProjectDao();
         taskDao = new TaskDao();
+        isLog=false;
 
         loadDatabases();
         user=null;
+    }
+
+    public boolean isLogged(){
+        return isLog;
     }
 
     private void loadDatabases(){
         projectDao.loadFromDb();
         userDao.loadFromDb();
         taskDao.loadFromDb();
+    }
+
+    public User getUser(){
+        return user;
     }
 
     public boolean login(String login, String password){
@@ -41,6 +54,7 @@ public class UserService {
             boolean passwordsCorrect = Objects.equals(user.getPassword(), password);
             if(passwordsCorrect){
                 this.user = user;
+                this.isLog = true;
                 return true;
             }
 
@@ -64,8 +78,22 @@ public class UserService {
         return true;
     }
 
-    public boolean addProject(Project project){
-        project.setUserId(user.getId());
+    public Optional<List<Project>> getAllProjects(){
+        return projectDao.getProjectsListByUserId(user.getId());
+    }
+
+    public void logaut(){
+        user = null;
+        isLog = false;
+    }
+
+    public boolean addProject(String name, String description){
+        Project project = new Project.ProjectBuilder()
+                .setProjectName(name)
+                .setProjectDescription(description)
+                .setUserId(user.getId())
+                .buildProject();
+
         projectDao.insert(project);
         return true;
     }

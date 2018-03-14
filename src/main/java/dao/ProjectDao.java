@@ -142,9 +142,9 @@ public class ProjectDao implements Dao, DaoRelation {
         String [] projectInformations = record.split("~");
         Project project = new Project.ProjectBuilder()
                 .setProjectId(Integer.parseInt(projectInformations[0]))
-                .setProjectName(projectInformations[1])
+                .setProjectName(projectInformations[3])
                 .setProjectDescription(projectInformations[2])
-                .setUserId(Integer.parseInt(projectInformations[3]))
+                .setUserId(Integer.parseInt(projectInformations[1]))
                 .buildProject();
         return (Object) project;
     }
