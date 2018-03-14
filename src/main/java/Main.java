@@ -3,6 +3,7 @@ import dao.TaskDao;
 import dao.UserDao;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -19,56 +20,138 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import model.Project;
 import model.Task;
 import model.User;
 import service.UserService;
 
-public class Main extends Application {
+import java.util.Optional;
+
+public class Main extends Application{
+
+    Stage mainStage;
+    Scene loginScene;
+    Scene mainScene;
+    Scene registerScene;
+
+    UserService userService = new UserService();
 
     public static void main(String[] args) {
-        UserService userService = new UserService();
 
-
-        User user = userService.login("kamcio", "asdasd").get();
-
-
-        //launch();
+        launch();
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Moqqo - todo list");
+    public void start(Stage stage) throws Exception {
+        mainStage = stage;
+        mainStage.setTitle("Moqqo - todo list");
+
+        loginScene = initializeLoginScene();
+        registerScene = initializeRegisterScene();
+
+
+
+
+        //loginScene = new Scene(grid, 300, 300);
+       // mainScene = new Scene(gridHome, 300, 300);
+
+
+        mainStage.setScene(loginScene);
+        mainStage.show();
+    }
+
+    public Scene initializeRegisterScene(){
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        Text scenetitle = new Text("Access to applicationg");
-        scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
-        grid.add(scenetitle, 0, 0, 2, 1);
+        Label loginLabel = new Label("Login: ");
+        GridPane.setConstraints(loginLabel, 0, 0);
 
-        Label userName = new Label("Login:");
-        grid.add(userName, 0, 1);
+        TextField loginInput = new TextField();
+        loginInput.setPromptText("login");
+        GridPane.setConstraints(loginInput, 0, 1);
 
-        TextField userTextField = new TextField();
-        grid.add(userTextField, 1, 1);
+        Label emailLabel = new Label("Adres e-mail: ");
+        GridPane.setConstraints(emailLabel, 0, 2);
 
-        Label pw = new Label("Password:");
-        grid.add(pw, 0, 2);
+        TextField emailInput = new TextField();
+        loginInput.setPromptText("email");
+        GridPane.setConstraints(emailInput, 0, 3);
 
-        PasswordField pwBox = new PasswordField();
-        grid.add(pwBox, 1, 2);
+        Label passLabel = new Label("Password: ");
+        GridPane.setConstraints(passLabel, 0,4);
 
-        Scene scene = new Scene(grid, 300, 275);
+        TextField passInput = new TextField();
+        passInput.setPromptText("password");
+        GridPane.setConstraints(passInput, 0, 5);
 
-        Button btn = new Button("Sign in");
-        HBox hbBtn = new HBox(10);
-        hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
-        hbBtn.getChildren().add(btn);
-        grid.add(hbBtn, 1, 4);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        Button registerBtn = new Button("Register");
+        GridPane.setConstraints(registerBtn, 0,6);
+
+        registerBtn.setOnAction(e->{
+            String login = loginInput.getText();
+            String email = emailInput.getText();
+            String password = passInput.getText();
+
+            boolean registerSuccesful = userService.register(login, email, password);
+            if(registerSuccesful){
+                System.out.println("Zarejestrowany");
+            }else{
+                System.out.println("Cos poszło nie tak");
+            }
+        });
+
+        grid.getChildren().addAll(loginLabel, loginInput, emailInput, emailLabel, passLabel, passInput, registerBtn);
+
+        return new Scene(grid, 500, 500);
+
+
+
     }
+
+    public Scene initializeLoginScene(){
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(25, 25, 25, 25));
+
+        Label loginLabel = new Label("Login: ");
+        GridPane.setConstraints(loginLabel, 0, 0);
+
+        TextField loginInput = new TextField();
+        loginInput.setPromptText("login");
+        GridPane.setConstraints(loginInput, 0, 1);
+
+        Label passLabel = new Label("Password: ");
+        GridPane.setConstraints(passLabel, 0,2);
+
+        TextField passInput = new TextField();
+        passInput.setPromptText("password");
+        GridPane.setConstraints(passInput, 0, 3);
+
+        Button loginBtn = new Button("Login");
+        GridPane.setConstraints(loginBtn, 0,4);
+
+        loginBtn.setOnAction(e->{
+            if(userService.login(loginInput.getText(), passInput.getText())) {
+                mainStage.setScene(mainScene);
+            }
+        });
+
+        Button registerBtn = new Button("Sign up");
+        GridPane.setConstraints(registerBtn, 1, 4);
+        registerBtn.setOnAction(e->{
+            mainStage.setScene(registerScene);
+        });
+
+        grid.getChildren().addAll(loginLabel, loginInput, passLabel, passInput, loginBtn, registerBtn);
+
+        return new Scene(grid, 500, 500);
+    }
+
 }

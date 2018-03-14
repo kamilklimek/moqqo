@@ -33,23 +33,22 @@ public class UserService {
         taskDao.loadFromDb();
     }
 
-    public Optional<User> login(String login, String password){
+    public boolean login(String login, String password){
         Integer userId = userDao.existsByLogin(login);
 
-        System.out.print(userId);
         if(userId != -1){
-
-            System.out.print("TUTAJ2");
             User user = (User) userDao.findById(userId).get();
-            boolean passwordsCorrect = user.getPassword().equals(password);
-            if(passwordsCorrect)
-                return Optional.of(user);
-            System.out.print("TUTAJ3");
+            boolean passwordsCorrect = Objects.equals(user.getPassword(), password);
+            if(passwordsCorrect){
+                this.user = user;
+                return true;
+            }
+
         }
-        return Optional.empty();
+        return false;
     }
 
-    public String register(String login, String email, String password){
+    public boolean register(String login, String email, String password){
         User user = new User.UserBuilder()
                 .setLogin(login)
                 .setEmail(email)
@@ -59,18 +58,21 @@ public class UserService {
         userDao.insert(user);
 
         if(userDao.existsById(user.getId())==-1)
-            return "Something went wrong!";
+            return false;
 
         userDao.saveToDb();
-        return "Register succesful!";
+        return true;
     }
 
     public boolean addProject(Project project){
+        project.setUserId(user.getId());
+        projectDao.insert(project);
         return true;
     }
 
     public boolean addTask(Task task, Integer projectId){
-
+        task.setProjectId(projectId);
+        taskDao.insert(task);
         return true;
     }
 

@@ -108,7 +108,7 @@ public class UserDao implements Dao{
         if(existsById(id) == -1)
             return Optional.empty();
 
-        return Optional.of(users.containsKey(id));
+        return Optional.of(users.get(id));
     }
 
 
@@ -124,9 +124,9 @@ public class UserDao implements Dao{
         return id;
     }
 
-    public Integer existsByLogin(String email){
+    public Integer existsByLogin(String login){
         for (Map.Entry<Integer, User > user: users.entrySet()) {
-            if(user.getValue().getEmail() == email)
+            if(Objects.equals(user.getValue().getLogin(), login))
                 return user.getKey();
         }
 
