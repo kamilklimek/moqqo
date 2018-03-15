@@ -4,11 +4,11 @@ Todo list application where you can:
 - Login into your profile
 - Create projects
 - Add tasks to projects
+- Display projects and tasks
 
 Informations are saved to binary files.
 
 Todo:
-- Display tasks near projects
 - Delete projects
 - Delete tasks
 - Edit profile
