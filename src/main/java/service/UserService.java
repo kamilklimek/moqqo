@@ -82,7 +82,29 @@ public class UserService {
         return projectDao.getProjectsListByUserId(user.getId());
     }
 
+    public Integer getProjectIdByProjectName(String projectName){
+        if(!getAllProjects().isPresent())
+            return -1;
+        for (Project project : getAllProjects().get()
+             ) {
+            if(Objects.equals(project.getProjectName(), projectName))
+                return project.getId();
+        }
+        return -1;
+    }
+
+    public Optional<List<Task>> getTasksByProjectId(Integer projectId){
+        return taskDao.getTasksListByProjectId(projectId);
+    }
+
+    public void saveAll(){
+        projectDao.saveToDb();
+        userDao.saveToDb();
+        taskDao.saveToDb();
+    }
+
     public void logaut(){
+        saveAll();
         user = null;
         isLog = false;
     }

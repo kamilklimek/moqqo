@@ -106,9 +106,9 @@ public class ProjectDao implements Dao, DaoRelation {
             file.close();
 
         } catch (FileNotFoundException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }catch (IOException e) {
-            //e.printStackTrace();
+            e.printStackTrace();
         }
     }
 

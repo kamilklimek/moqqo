@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -14,6 +15,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import model.Project;
 import model.User;
+import model.Task;
 import service.UserService;
 
 import java.io.IOException;
@@ -26,6 +28,7 @@ public class Main extends Application{
     Scene loginScene;
     Scene mainScene;
     Scene registerScene;
+    Scene temp;
 
     Integer windowWidth;
     Integer windowHeight;
@@ -34,22 +37,7 @@ public class Main extends Application{
     UserService userService = new UserService();
 
     public static void main(String[] args) {
-        Project project = new Project.ProjectBuilder()
-                .setUserId(0)
-                .setProjectName("hi2")
-                .setProjectDescription("hi22")
-                .buildProject();
-
-        Project project2 = new Project.ProjectBuilder()
-                .setUserId(0)
-                .setProjectName("elo")
-                .setProjectDescription("elo")
-                .buildProject();
-
-        ProjectDao projectDao = new ProjectDao();
-        projectDao.insert(project2);
-        projectDao.insert(project);
-        projectDao.saveToDb();
+       
         launch();
     }
 
@@ -68,50 +56,63 @@ public class Main extends Application{
         mainStage.show();
     }
 
+    public GridPane alignMenuGrid(GridPane grid) {
+        int row = 0;
 
-
-    public Scene initializeProjectListScene(){
-
-        GridPane grid = new GridPane();
-        grid.setHgap(10);
-
-        Button projectList = new Button("Projects list");
-        GridPane.setConstraints(projectList, 0, 0);
-        projectList.setOnAction(e->{
+        Button projectsListBtn = new Button("Projects list");
+        GridPane.setConstraints(projectsListBtn, 0, row++);
+        projectsListBtn.setOnAction(e->{
             mainScene = initializeProjectListScene();
             mainStage.setScene(mainScene);
         });
 
 
-        Button profile = new Button("Profile");
-        GridPane.setConstraints(profile, 0, 1);
-        profile.setOnAction(e->{
+        Button profileBtn = new Button("Profile");
+        GridPane.setConstraints(profileBtn, 0, row++);
+        profileBtn.setOnAction(e->{
             mainScene = initializeProfileScene();
             mainStage.setScene(mainScene);
         });
 
+
+        Button newProjectBtn = new Button("New project");
+        GridPane.setConstraints(newProjectBtn, 0, row++);
+        newProjectBtn.setOnAction(e->{
+            mainScene = initializeNewProjectScene();
+            mainStage.setScene(mainScene);
+        });
+
+        Button newTaskBtn = new Button("New task");
+        GridPane.setConstraints(newTaskBtn, 0, row++);
+        newTaskBtn.setOnAction(e->{
+            mainScene = initializeNewTask();
+            mainStage.setScene(mainScene);
+        });
+
+
         Button logautBtn = new Button("Logout");
-        GridPane.setConstraints(logautBtn, 0, 2);
+        GridPane.setConstraints(logautBtn, 0, row++);
         logautBtn.setOnAction(e->{
             userService.logaut();
             mainScene = initializeLoginScene();
             mainStage.setScene(mainScene);
         });
 
-        Button newProject = new Button("New project");
-        GridPane.setConstraints(newProject, 0, 3);
-        newProject.setOnAction(e->{
-            mainScene = initializeNewProjectScene();
-            mainStage.setScene(mainScene);
-        });
-        Button newTask = new Button("New task");
-        GridPane.setConstraints(newTask, 0, 4);
-        newTask.setOnAction(e->{
-            mainScene = initializeNewTask();
-            mainStage.setScene(mainScene);
-        });
+
+        grid.getChildren().addAll(
+                logautBtn, newProjectBtn, newTaskBtn, profileBtn, projectsListBtn
+        );
+
+        return grid;
+    }
 
 
+
+    public Scene initializeProjectListScene(){
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid = alignMenuGrid(grid);
 
         Label projectListLabel = new Label("Projects: ");
         projectListLabel.setFont(Font.font(25));
@@ -128,10 +129,33 @@ public class Main extends Application{
                 GridPane.setConstraints(labelProject, 1, row++);
                 GridPane.setConstraints(labelDescription, 1, row++);
                 grid.getChildren().addAll(labelProject,labelDescription);
+
+                boolean listIsNotEmpty = userService.getTasksByProjectId(project.getId()).isPresent();
+                if(listIsNotEmpty){
+                    List<Task> tasks = userService.getTasksByProjectId(project.getId()).get();
+                    Label separator1 = new Label("-----------------------");
+                    GridPane.setConstraints(separator1, 1, row++);
+                    for (Task task : tasks
+                         ) {
+                        Label labelTaskName = new Label(task.getTaskName());
+                        Label labelTaskDescription = new Label("Opis: " + task.getTaskDescription());
+                        labelTaskName.setFont(Font.font(14));
+                        GridPane.setConstraints(labelTaskName, 1, row++);
+                        GridPane.setConstraints(labelTaskDescription, 1, row++);
+                        grid.getChildren().addAll(labelTaskName,labelTaskDescription);
+                    }
+
+                    Label separator2 = new Label("-----------------------");
+                    GridPane.setConstraints(separator2, 1, row++);
+                    grid.getChildren().addAll(separator1,separator2);
+
+                }
+
+
             }
         }
 
-        grid.getChildren().addAll(projectList,profile,logautBtn, projectListLabel, newProject, newTask);
+        grid.getChildren().addAll(projectListLabel);
         return new Scene(grid, windowWidth, windowHeight);
     }
 
@@ -139,42 +163,7 @@ public class Main extends Application{
         GridPane grid = new GridPane();
         grid.setHgap(10);
 
-        Button projectList = new Button("Projects list");
-        GridPane.setConstraints(projectList, 0, 0);
-        projectList.setOnAction(e->{
-            mainScene = initializeProjectListScene();
-            mainStage.setScene(mainScene);
-        });
-
-
-        Button profile = new Button("Profile");
-        GridPane.setConstraints(profile, 0, 1);
-        profile.setOnAction(e->{
-            mainScene = initializeProfileScene();
-            mainStage.setScene(mainScene);
-        });
-
-        Button logautBtn = new Button("Logout");
-        GridPane.setConstraints(logautBtn, 0, 2);
-        logautBtn.setOnAction(e->{
-            userService.logaut();
-            mainScene = initializeLoginScene();
-            mainStage.setScene(mainScene);
-        });
-
-        Button newProject = new Button("New project");
-        GridPane.setConstraints(newProject, 0, 3);
-        newProject.setOnAction(e->{
-            mainScene = initializeNewProjectScene();
-            mainStage.setScene(mainScene);
-        });
-        Button newTask = new Button("New task");
-        GridPane.setConstraints(newTask, 0, 4);
-        newTask.setOnAction(e->{
-            mainScene = initializeNewTask();
-            mainStage.setScene(mainScene);
-        });
-
+        grid = alignMenuGrid(grid);
 
         Label projectListLabel = new Label("New project: ");
         projectListLabel.setFont(Font.font(25));
@@ -196,17 +185,19 @@ public class Main extends Application{
         Button addProjectBtn = new Button("Add project");
         GridPane.setConstraints(addProjectBtn, 1, row++);
 
+
+        Label result = new Label();
         addProjectBtn.setOnAction(e->{
             userService.addProject(projectNameInput.getText(), projectDescriptionInput.getText());
-            Label result = new Label("Project " + projectNameInput.getText() + " was created.");
+            result.setText("Project " + projectNameInput.getText() + " is created.");
             GridPane.setConstraints(result, 1, 8);
-            grid.getChildren().add(result);
+
         });
 
+        grid.getChildren().add(result);
 
 
-
-        grid.getChildren().addAll(projectList,profile,logautBtn,addProjectBtn, projectListLabel,newTask, newProject, projectNameInput, projectDescriptionInput, projectDescriptionLabel, projectNameLabel);
+        grid.getChildren().addAll(addProjectBtn, projectListLabel, projectNameInput, projectDescriptionInput, projectDescriptionLabel, projectNameLabel);
         return new Scene(grid, windowWidth, windowHeight);
 
 
@@ -216,43 +207,7 @@ public class Main extends Application{
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
-
-        Button projectList = new Button("Projects list");
-        GridPane.setConstraints(projectList, 0, 0);
-        projectList.setOnAction(e->{
-            mainScene = initializeProjectListScene();
-            mainStage.setScene(mainScene);
-        });
-
-
-        Button profile = new Button("Profile");
-        GridPane.setConstraints(profile, 0, 1);
-        profile.setOnAction(e->{
-            mainScene = initializeProfileScene();
-            mainStage.setScene(mainScene);
-        });
-
-        Button logautBtn = new Button("Logout");
-        GridPane.setConstraints(logautBtn, 0, 2);
-        logautBtn.setOnAction(e->{
-            userService.logaut();
-            mainScene = initializeLoginScene();
-            mainStage.setScene(mainScene);
-        });
-
-        Button newProject = new Button("New project");
-        GridPane.setConstraints(newProject, 0, 3);
-        newProject.setOnAction(e->{
-            mainScene = initializeNewProjectScene();
-            mainStage.setScene(mainScene);
-        });
-        Button newTask = new Button("New task");
-        GridPane.setConstraints(newTask, 0, 4);
-        newTask.setOnAction(e->{
-            mainScene = initializeNewTask();
-            mainStage.setScene(mainScene);
-        });
-
+        grid = alignMenuGrid(grid);
 
         Label profileLabel = new Label("New task");
         profileLabel.setFont(Font.font(25));
@@ -262,6 +217,7 @@ public class Main extends Application{
 
         Label projects = new Label("Choose project: ");
         GridPane.setConstraints(projects, 1, row++);
+
         ChoiceBox projectsSelect = new ChoiceBox(FXCollections.observableArrayList(
                 "(none)"));
 
@@ -274,9 +230,43 @@ public class Main extends Application{
             projectsSelect = new ChoiceBox(FXCollections.observableArrayList(projectNames));
         }
 
-        GridPane.setConstraints(projectsSelect, 1, row++);
 
-        grid.getChildren().addAll(projectList,profile,logautBtn, profileLabel, newProject, projectsSelect, newTask);
+        GridPane.setConstraints(projectsSelect, 1, row++);
+        List<TextField> textFields = new LinkedList<>();
+
+        TextField taskNameInput = new TextField("");
+        taskNameInput.setPromptText("Task name");
+        GridPane.setConstraints(taskNameInput, 1,row++);
+
+
+        TextField taskDescriptionInput = new TextField();
+        taskDescriptionInput.setPromptText("Description");
+        GridPane.setConstraints(taskDescriptionInput, 1,row++);
+
+        Button taskSubmitBtn = new Button("Add task");
+        GridPane.setConstraints(taskSubmitBtn, 1, row++);
+
+        ChoiceBox finalProjectsSelect = projectsSelect;
+
+        Label addTaskResult = new Label();
+        GridPane.setConstraints(addTaskResult, 1,row++);
+
+        final ChoiceBox choiceBox = projectsSelect;
+        taskSubmitBtn.setOnAction(e->{
+            String projectName = (String)choiceBox.getValue();
+            Integer projectId = userService.getProjectIdByProjectName(projectName);
+            Task task = new Task.TaskBuilder()
+                    .setTaskName(taskNameInput.getText())
+                    .setTaskDescription(taskDescriptionInput.getText())
+                    .setProjectId(projectId)
+                    .buildTask();
+            userService.addTask(task, projectId);
+            addTaskResult.setText(task.getTaskName() + " is added to project: " + projectName);
+
+
+        });
+
+        grid.getChildren().addAll(addTaskResult, profileLabel, projectsSelect, taskDescriptionInput, taskNameInput, taskSubmitBtn);
         return new Scene(grid, windowWidth, windowHeight);
     }
 
@@ -285,41 +275,7 @@ public class Main extends Application{
         GridPane grid = new GridPane();
         grid.setHgap(10);
 
-        Button projectList = new Button("Projects list");
-        GridPane.setConstraints(projectList, 0, 0);
-        projectList.setOnAction(e->{
-            mainScene = initializeProjectListScene();
-            mainStage.setScene(mainScene);
-        });
-
-
-        Button profile = new Button("Profile");
-        GridPane.setConstraints(profile, 0, 1);
-        profile.setOnAction(e->{
-            mainScene = initializeProfileScene();
-            mainStage.setScene(mainScene);
-        });
-
-        Button logautBtn = new Button("Logout");
-        GridPane.setConstraints(logautBtn, 0, 2);
-        logautBtn.setOnAction(e->{
-            userService.logaut();
-            mainScene = initializeLoginScene();
-            mainStage.setScene(mainScene);
-        });
-
-        Button newProject = new Button("New project");
-        GridPane.setConstraints(newProject, 0, 3);
-        newProject.setOnAction(e->{
-            mainScene = initializeNewProjectScene();
-            mainStage.setScene(mainScene);
-        });
-        Button newTask = new Button("New task");
-        GridPane.setConstraints(newTask, 0, 4);
-        newTask.setOnAction(e->{
-            mainScene = initializeNewTask();
-            mainStage.setScene(mainScene);
-        });
+        grid = alignMenuGrid(grid);
 
 
         Label profileLabel = new Label("Your profile: ");
@@ -338,7 +294,7 @@ public class Main extends Application{
 
 
 
-        grid.getChildren().addAll(projectList,profile,logautBtn, login, email, password, newTask,profileLabel, newProject);
+        grid.getChildren().addAll(login, email, password,profileLabel);
         return new Scene(grid, windowWidth, windowHeight);
     }
 
@@ -380,13 +336,23 @@ public class Main extends Application{
 
             boolean registerSuccesful = userService.register(login, email, password);
             if(registerSuccesful){
-                System.out.println("Zarejestrowany");
+                loginScene = initializeLoginScene();
+                mainStage.setScene(loginScene);
             }else{
-                System.out.println("Cos poszło nie tak");
+                System.out.println("Somethings went wrong!");
             }
         });
 
-        grid.getChildren().addAll(loginLabel, loginInput, emailInput, emailLabel, passLabel, passInput, registerBtn);
+        Button back = new Button("Back");
+        GridPane.setConstraints(back, 0, 7);
+        back.setOnAction(e->{
+
+            loginScene = initializeLoginScene();
+            mainStage.setScene(loginScene);
+
+        });
+
+        grid.getChildren().addAll(loginLabel, loginInput, emailInput, emailLabel, passLabel, passInput, registerBtn, back);
 
         return new Scene(grid, windowWidth, windowHeight);
 
@@ -401,35 +367,44 @@ public class Main extends Application{
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
+        int row = 0;
         Label loginLabel = new Label("Login: ");
-        GridPane.setConstraints(loginLabel, 0, 0);
+        GridPane.setConstraints(loginLabel, 0, row++);
 
         TextField loginInput = new TextField();
         loginInput.setPromptText("login");
-        GridPane.setConstraints(loginInput, 0, 1);
+        GridPane.setConstraints(loginInput, 0, row++);
 
         Label passLabel = new Label("Password: ");
-        GridPane.setConstraints(passLabel, 0,2);
+        GridPane.setConstraints(passLabel, 0,row++);
 
         TextField passInput = new TextField();
         passInput.setPromptText("password");
-        GridPane.setConstraints(passInput, 0, 3);
+        GridPane.setConstraints(passInput, 0, row++);
 
         Button loginBtn = new Button("Login");
-        GridPane.setConstraints(loginBtn, 0,4);
+        GridPane.setConstraints(loginBtn, 0,row++);
+
+        Button registerBtn = new Button("Sign up");
+        GridPane.setConstraints(registerBtn, 0, row++);
+        registerBtn.setOnAction(e->{
+            mainStage.setScene(registerScene);
+
+        });
+        Label result = new Label();
+        GridPane.setConstraints(result, 0,row++);
 
         loginBtn.setOnAction(e->{
             if(userService.login(loginInput.getText(), passInput.getText())) {
                 mainScene = initializeProjectListScene();
                 mainStage.setScene(mainScene);
+            }else{
+                result.setText("Wrong password or login!");
+                grid.getChildren().add(result);
+
             }
         });
 
-        Button registerBtn = new Button("Sign up");
-        GridPane.setConstraints(registerBtn, 0, 5);
-        registerBtn.setOnAction(e->{
-            mainStage.setScene(registerScene);
-        });
 
         grid.getChildren().addAll(loginLabel, loginInput, passLabel, passInput, loginBtn, registerBtn);
 
